@@ -1,0 +1,59 @@
+.dashboard-container {
+    padding: 1.5rem;
+}
+
+.stat-card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: transform 0.2s ease-in-out;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-icon i {
+    font-size: 1.5rem;
+}
+
+.chart-card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1.5rem;
+}
+
+.chart-card .card-header {
+    padding: 1.25rem 1.25rem 0;
+}
+
+.chart-card .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #495057;
+}
+
+.table th {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #495057;
+}
+
+.table td {
+    font-size: 0.875rem;
+    vertical-align: middle;
+}
+
+.badge {
+    padding: 0.5em 0.75em;
+    font-weight: 500;
+    font-size: 0.75rem;
+}
