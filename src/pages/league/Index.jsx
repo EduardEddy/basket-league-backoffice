@@ -2,19 +2,17 @@ import ButtonNavigation from "../../components/Button/ButtonNavigation";
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllLeagues } from '../../store/league/getAllSlice';
 import { useEffect, useState } from 'react';
-import { ClipLoader } from "react-spinners";
+import GenericTable from "../../components/Table.jsx/GenericTable";
 
 const League = () => {
   const dispatch = useDispatch();
-  const { leagues = [], loading = false, pagination = { currentPage: 1, totalPages: 0, totalUsers: 0, pageSize: 10 } } = useSelector((state) => state.leagues || {});
+  const { leagues = [], loading = false, pagination = { currentPage: 1, totalPages: 0, totalUsers: 0, pageSize: 3 } } = useSelector((state) => state.leagues || {});
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortField, setSortField] = useState('id');
   const [sortDirection, setSortDirection] = useState('asc');
-
-  console.log('Leagues data:', leagues);
-  console.log('Loading:', loading);
+  const [search, setSearch] = useState('');
 
   const handleGetLeagues = async () => {
     const params = {
@@ -81,7 +79,7 @@ const League = () => {
         </div>
 
         <div className="card-body">
-          <div className="row mb-3">
+          {/*S<div className="row mb-3">
             <div className="col-md-6 d-flex align-items-center">
               <label className="me-2">Mostrar:</label>
               <select className="form-select w-auto" value={pageSize} onChange={handlePageSizeChange}>
@@ -101,10 +99,10 @@ const League = () => {
                 onChange={handleSearch}
               />
             </div>
-          </div>
+          </div>*/}
 
           <div className="table-responsive">
-            <table className="table table-bordered table-hover">
+            {/*<table className="table table-bordered table-hover">
               <thead className="table-light">
                 <tr>
                   <th onClick={() => handleSort('name')} style={{ cursor: 'pointer' }}>
@@ -146,11 +144,10 @@ const League = () => {
                   ))
                 )}
               </tbody>
-            </table>
-          </div>
+            </table>*/}
 
-          {/* Paginación */}
-          {!loading && leagues.length > 0 && pagination.totalPages > 0 && (
+            {/* Paginación */}
+            {/*!loading && leagues.length > 0 && pagination.totalPages > 0 && (
             <div className="d-flex justify-content-between align-items-center mt-3">
               <div>
                 Mostrando {(pagination.currentPage - 1) * pagination.pageSize + 1} a{' '}
@@ -178,7 +175,24 @@ const League = () => {
                 </ul>
               </nav>
             </div>
-          )}
+          )*/}
+
+            <GenericTable
+              columns={[
+                { header: 'Nombre', accessor: 'name' },
+                { header: 'Descripción', accessor: 'description' },
+                { header: 'País', accessor: 'country' },
+                { header: 'Usuario Manager', accessor: 'managerUserId' },
+              ]}
+              data={leagues}
+              onEdit={() => { }}
+              onDelete={() => { }}
+              searchValue={search}
+              onSearchChange={setSearch}
+              pageSize={3}
+              loading={loading}
+            />
+          </div>
         </div>
       </div>
     </div>
