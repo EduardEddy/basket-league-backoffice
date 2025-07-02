@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ClipLoader } from "react-spinners";
 
 function GenericTable({
@@ -6,51 +6,20 @@ function GenericTable({
   data = [],
   onEdit = () => { },
   onDelete = () => { },
-  searchValue = '',
-  onSearchChange = () => { },
-  pageSize = 10,
   loading = false,
+  currentPage = 1,
+  totalPages = 1,
+  onPageChange = () => { },
 }) {
-  const [currentPage, setCurrentPage] = useState(1);
 
-  const filteredData = data.filter((item) =>
-    columns.some((col) =>
-      String(item[col.accessor]).toLowerCase().includes(searchValue.toLowerCase())
-    )
-  );
-
-  const totalPages = Math.ceil(filteredData.length / pageSize);
-
-  const handlePageChange = (page) => {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
-  };
-
-  const paginatedData = filteredData.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
-  );
+  function getValueByAccessor(item, accessor) {
+    if (!accessor) return '--';
+    // Permite 'profile.name' acceso profundo
+    return accessor.split('.').reduce((obj, key) => obj?.[key], item) ?? '--';
+  }
 
   return (
     <div>
-      {/* Buscador */}
-      <div className="mb-3 d-flex justify-content-between align-items-center">
-        <input
-          type="text"
-          className="form-control w-auto"
-          placeholder="Buscar..."
-          value={searchValue}
-          onChange={(e) => {
-            onSearchChange(e.target.value);
-            setCurrentPage(1); // reiniciar paginación al buscar
-          }}
-        />
-        <span className="ms-3 small">
-          {filteredData.length} resultados encontrados
-        </span>
-      </div>
-
-      {/* Tabla */}
       <div className="table-responsive shadow-sm rounded">
         <table className="table table-striped table-bordered align-middle">
           <thead className="table-light">
@@ -65,19 +34,16 @@ function GenericTable({
             {loading && (
               <tr>
                 <td colSpan={columns.length + 1} className="text-center">
-                  <ClipLoader
-                    color={"#000"}
-                    size={60}
-                    aria-label="Loading Spinner"
-                    data-testid="loader" />
+                  <ClipLoader color={"#000"} size={40} />
                 </td>
               </tr>
             )}
-            {paginatedData.length > 0 ? (
-              paginatedData.map((item, idx) => (
+            {!loading && data.length > 0 ? (
+              data.map((item, idx) => (
                 <tr key={idx}>
                   {columns.map((col, cidx) => (
-                    <td key={cidx}>{item[col.accessor]}</td>
+                    //{<td key={cidx}>{item[col.accessor]}</td>}
+                    <td key={cidx}>{col.cell ? col.cell(item) : getValueByAccessor(item, col.accessor)}</td>
                   ))}
                   <td>
                     <button
@@ -96,11 +62,13 @@ function GenericTable({
                 </tr>
               ))
             ) : (
-              <tr>
-                <td colSpan={columns.length + 1} className="text-center">
-                  No hay registros.
-                </td>
-              </tr>
+              !loading && (
+                <tr>
+                  <td colSpan={columns.length + 1} className="text-center">
+                    No hay registros.
+                  </td>
+                </tr>
+              )
             )}
           </tbody>
         </table>
@@ -111,7 +79,7 @@ function GenericTable({
         <nav className="d-flex justify-content-center mt-3">
           <ul className="pagination pagination-sm">
             <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-              <button className="page-link" onClick={() => handlePageChange(currentPage - 1)}>
+              <button className="page-link" onClick={() => onPageChange(currentPage - 1)}>
                 Anterior
               </button>
             </li>
@@ -120,13 +88,13 @@ function GenericTable({
                 key={i}
                 className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}
               >
-                <button className="page-link" onClick={() => handlePageChange(i + 1)}>
+                <button className="page-link" onClick={() => onPageChange(i + 1)}>
                   {i + 1}
                 </button>
               </li>
             ))}
             <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-              <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}>
+              <button className="page-link" onClick={() => onPageChange(currentPage + 1)}>
                 Siguiente
               </button>
             </li>

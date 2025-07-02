@@ -12,11 +12,7 @@ const Login = () => {
   const { user, loading, error } = useSelector((state) => state.auth);
 
   const handleLogin = async () => {
-    const auth = await dispatch(loginUser(loginData));
-    console.log('auth', auth?.payload?.success);
-    console.log('user', user);
-    return window.location.href = '/users';
-    //return navigate('/users');
+    await dispatch(loginUser(loginData));
   };
 
   return (
